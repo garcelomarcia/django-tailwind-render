@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = os.getenv("DEBUG", "0") == "1"
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-unsafe-key")
-DATABASE_URL = os.getenv("DATABASE_URL", "'postgresql://postgres:Limited99.@localhost:5432/tienda'")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:Limited99.@localhost:5432/tienda")
 
 ALLOWED_HOSTS = []
 RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'tienda_proj.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=,
+        default=DATABASE_URL,
         conn_max_age=600
     )
 }
