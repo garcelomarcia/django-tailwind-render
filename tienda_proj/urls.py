@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),               
     path('clientes/', include('clientes.urls')) ,
-    path("__reload__/", include("django_browser_reload.urls")),
 ]
+
+if settings.DEBUG: urlpatterns += [path("__reload__/", include("django_browser_reload.urls"))]
