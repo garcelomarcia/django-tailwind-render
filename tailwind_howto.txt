@@ -4,7 +4,7 @@ pip install django-tailwind django-browser-reload
 2. Actualizar settings.py agregando lo siguiente:
 INSTALLED_APPS += ["tailwind", "django_browser_reload"]
 
-3. Correr "python manage.py tailwind init theme"
+3. Correr "python manage.py tailwind init"
 
 4. Agregar a settings.py lo siguiente
 TAILWIND_APP_NAME = "theme"
