@@ -10,61 +10,45 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+# --- arriba del archivo ---
+import os
 from pathlib import Path
 import dj_database_url
-import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-DEBUG = os.getenv("DEBUG", "0") == "1"
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sz2+r0d!o6nu#hvzi=i*fd118n(x9c8ul$95sko0wtm4n1(=hr'
-
-# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv("DEBUG", "0") == "1"
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-unsafe-key")
 
 ALLOWED_HOSTS = []
 RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-
-# Application definition
-
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'tailwind',
-    'django_browser_reload',
-    'theme',
-    'clientes'
+    'django.contrib.admin','django.contrib.auth','django.contrib.contenttypes',
+    'django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles',
+    'theme','clientes'
 ]
-
-TAILWIND_APP_NAME = "theme"
-
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+if DEBUG:
+    INSTALLED_APPS += ['tailwind','django_browser_reload']
+    TAILWIND_APP_NAME = 'theme'
+    # (solo local Windows) NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # importante en prod
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
-],
-
+]
 if DEBUG:
+    # ¡OJO! Debe ser **string**, NO lista.
     MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
+
 
 ROOT_URLCONF = 'tienda_proj.urls'
 
