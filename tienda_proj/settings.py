@@ -56,7 +56,7 @@ ROOT_URLCONF = 'tienda_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [BASE_DIR / 'templates'],  # 👈 mejor absoluto
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
