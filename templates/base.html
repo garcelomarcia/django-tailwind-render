@@ -1,0 +1,50 @@
+{% load static %}
+{% load tailwind_tags %}
+<!doctype html>
+<html lang="es" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Mi App{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% tailwind_css %}
+    <!-- Si no usas django-tailwind:
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    -->
+  </head>
+  <body class="min-h-full bg-gray-50 text-gray-900">
+    <header class="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-gray-200">
+      <nav class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="flex items-center gap-4 py-3">
+          <a href="{% url 'home' %}" class="font-semibold text-gray-900 hover:text-blue-700">Home</a>
+          <a href="{% url 'clientes:list' %}" class="text-gray-700 hover:text-blue-700">Clientes</a>
+          <a href="{% url 'clientes:create' %}" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600">
+            Nuevo cliente
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    {% if messages %}
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 mt-4 space-y-2">
+        {% for m in messages %}
+          <div class="rounded-md border p-3 text-sm
+                      {% if m.tags == 'success' %}border-green-200 bg-green-50 text-green-800
+                      {% elif m.tags == 'error' %}border-red-200 bg-red-50 text-red-800
+                      {% else %}border-blue-200 bg-blue-50 text-blue-800{% endif %}">
+            {{ m }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="mt-12 border-t border-gray-200">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 text-sm text-gray-500">
+        © {{ now|date:"Y" }} Mi App
+      </div>
+    </footer>
+  </body>
+</html>

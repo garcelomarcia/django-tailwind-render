@@ -1,0 +1,32 @@
+1. Instalar las dependencias
+pip install django-tailwind django-browser-reload
+
+2. Actualizar settings.py agregando lo siguiente:
+INSTALLED_APPS += ["tailwind", "django_browser_reload"]
+
+3. Correr "python manage.py tailwind init theme"
+
+4. Agregar a settings.py lo siguiente
+TAILWIND_APP_NAME = "theme"
+MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+
+3. Agregar path a urls.py
+path("__reload__/", include("django_browser_reload.urls")),
+
+
+4. Inicializar Tailwind con python manage
+python manage.py tailwind install
+
+5. Incluir los siguientes tags en tu base.html (o en un base_tailwind.html para migración parcial):
+{% load tailwind_tags %}
+{% tailwind_css %}
+
+6. Para visualizar en desarrollo:
+python manage.py tailwind start   # watcher
+python manage.py runserver
+
+7. Para produccion:
+python manage.py tailwind build
+python manage.py collectstatic

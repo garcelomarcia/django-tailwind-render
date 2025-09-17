@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Clientes{% endblock %}
+{% block content %}
+  <div class="flex items-end justify-between flex-wrap gap-3">
+    <h1 class="text-2xl font-bold">Clientes</h1>
+    <form method="get" class="flex items-center gap-2">
+      <input
+        type="text"
+        name="q"
+        value="{{ request.GET.q }}"
+        placeholder="Buscar por nombre o email"
+        class="w-64 max-w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600"
+      />
+      <button class="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-white text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600">
+        Buscar
+      </button>
+      {% if request.GET.q %}
+        <a href="{% url 'clientes:list' %}" class="text-sm text-gray-700 hover:text-blue-700 underline">
+          Limpiar
+        </a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div class="mt-6 overflow-x-auto rounded-lg border border-gray-700 bg-white">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">ID</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Nombre</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Email</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Teléfono</th>
+          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-600">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for c in clientes %}
+          <tr class="odd:bg-white even:bg-gray-50">
+            <td class="px-4 py-3 text-sm text-gray-700">{{ c.cliente_id }}</td>
+            <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ c.nombre }}</td>
+            <td class="px-4 py-3 text-sm text-gray-700">{{ c.email }}</td>
+            <td class="px-4 py-3 text-sm text-gray-700">{{ c.telefono }}</td>
+            <td class="px-4 py-3 text-sm">
+              <div class="flex items-center gap-2">
+                <a href="{% url 'clientes:update' c.pk %}"
+                   class="inline-flex items-center rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-gray-700 hover:bg-gray-50">
+                  Editar
+                </a>
+                <a href="{% url 'clientes:delete' c.pk %}"
+                   class="inline-flex items-center rounded-md bg-red-600 px-2.5 py-1.5 text-white hover:bg-red-700">
+                  Eliminar
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="px-4 py-6 text-center text-gray-500">Sin clientes.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+    <div class="mt-4 flex items-center justify-between text-sm">
+      <div>
+        {% if page_obj.has_previous %}
+          <a href="?{% if request.GET.q %}q={{request.GET.q}}&{% endif %}page={{ page_obj.previous_page_number }}"
+             class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-gray-700 hover:bg-gray-50">« Anterior</a>
+        {% endif %}
+      </div>
+      <div class="text-gray-600">
+        Página <span class="font-medium">{{ page_obj.number }}</span> de <span class="font-medium">{{ page_obj.paginator.num_pages }}</span>
+      </div>
+      <div>
+        {% if page_obj.has_next %}
+          <a href="?{% if request.GET.q %}q={{request.GET.q}}&{% endif %}page={{ page_obj.next_page_number }}"
+             class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-gray-700 hover:bg-gray-50">Siguiente »</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
