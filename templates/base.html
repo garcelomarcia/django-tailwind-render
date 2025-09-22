@@ -1,16 +1,16 @@
 {% load static %}
-{% load tailwind_tags %}
 <!doctype html>
 <html lang="es" class="h-full">
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}Mi App{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {% tailwind_css %}
-    <link rel="stylesheet" href="{% static 'css/dist.css' %}">
-    <!-- Si no usas django-tailwind:
-    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
-    -->
+
+    {# En desarrollo: Tailwind “vivo” si DEBUG=True #}
+    {% if debug %}{% include "_dev_tailwind_head.html" %}{% endif %}
+
+    {# En prod (y también sirve en dev): CSS ya compilado y commiteado #}
+    <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
   </head>
   <body class="min-h-full bg-gray-50 text-gray-900">
     <header class="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-gray-200">
@@ -29,9 +29,9 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 mt-4 space-y-2">
         {% for m in messages %}
           <div class="rounded-md border p-3 text-sm
-                      {% if m.tags == 'success' %}border-green-200 bg-green-50 text-green-800
-                      {% elif m.tags == 'error' %}border-red-200 bg-red-50 text-red-800
-                      {% else %}border-blue-200 bg-blue-50 text-blue-800{% endif %}">
+              {% if m.tags == 'success' %}border-green-200 bg-green-50 text-green-800
+              {% elif m.tags == 'error' %}border-red-200 bg-red-50 text-red-800
+              {% else %}border-blue-200 bg-blue-50 text-blue-800{% endif %}">
             {{ m }}
           </div>
         {% endfor %}
@@ -44,7 +44,7 @@
 
     <footer class="mt-12 border-t border-gray-200">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 text-sm text-gray-500">
-        © {{ now|date:"Y" }} Mi App
+        © {% now "Y" %} Mi App
       </div>
     </footer>
   </body>

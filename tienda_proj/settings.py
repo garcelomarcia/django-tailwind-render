@@ -17,11 +17,29 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.getenv("DEBUG", "0") == "1"
+IS_DEV = os.getenv("DEBUG", "0") == "1"
+DEBUG = IS_DEV            # 👈 NECESARIO para que Django sirva /static en dev
+SSL_REQUIRE = os.getenv("DB_SSL", "0") == "1"  # usa 1 sólo si tu URL es "External" con SSL
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-unsafe-key")
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:Limited99.@localhost:5432/tienda")
 
-ALLOWED_HOSTS = []
+
+LOCAL_DEFAULT = "postgresql://postgres:Limited99.@localhost:5432/tienda"
+
+if IS_DEV:
+    db_url = os.getenv("DATABASE_URL", LOCAL_DEFAULT)   # .env manda; si falta, usa LOCAL_DEFAULT
+    conn_age = 0
+    ssl_req = False
+else:
+    # En producción exigimos DATABASE_URL (si falta, fallará con un error claro)
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError("DATABASE_URL no está definida en producción.")
+    conn_age = 600
+    ssl_req = SSL_REQUIRE
+
+if IS_DEV:
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
 RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -31,10 +49,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles',
     'theme','clientes'
 ]
-if DEBUG:
+if IS_DEV:
     INSTALLED_APPS += ['tailwind','django_browser_reload']
     TAILWIND_APP_NAME = 'theme'
-    # (solo local Windows) NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+    NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -46,7 +64,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-if DEBUG:
+if IS_DEV:
     # ¡OJO! Debe ser **string**, NO lista.
     MIDDLEWARE.append('django_browser_reload.middleware.BrowserReloadMiddleware')
 
@@ -61,6 +79,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.debug',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -75,9 +94,10 @@ WSGI_APPLICATION = 'tienda_proj.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600
+    "default": dj_database_url.config(
+        default=db_url,
+        conn_max_age=conn_age,
+        ssl_require=ssl_req,
     )
 }
 
@@ -116,12 +136,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # This production code might break development mode, so we check whether we're in DEBUG mode
-if not DEBUG:
-    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
-    # and renames the files with unique names for each version to support long-term caching
+# ✅ en producción (no dev) usamos WhiteNoise + Manifest
+if not IS_DEV:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
