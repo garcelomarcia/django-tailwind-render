@@ -10,4 +10,4 @@ python manage.py check --deploy
 python manage.py collectstatic --no-input
 
 # aplica migraciones que YA vienen comiteadas
-python manage.py migrate --no-input
+python manage.py migrate clientes
