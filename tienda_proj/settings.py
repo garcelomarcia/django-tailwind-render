@@ -37,6 +37,8 @@ else:
     conn_age = 600
     ssl_req = SSL_REQUIRE
 
+ALLOWED_HOSTS=[]
+
 if IS_DEV:
     ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
