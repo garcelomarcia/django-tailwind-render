@@ -9,5 +9,7 @@ python manage.py check --deploy
 # sirve estáticos (WhiteNoise)
 python manage.py collectstatic --no-input
 
+python manage.py makemigrations
+
 # aplica migraciones que YA vienen comiteadas
 python manage.py migrate --no-input
