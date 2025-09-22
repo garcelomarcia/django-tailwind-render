@@ -8,7 +8,6 @@ class Cliente(models.Model):
 
     class Meta:
         db_table = 'clientes'
-        managed = True  # <-- descomenta si YA existe la tabla y no quieres migrarla
 
     def __str__(self):
         return f"{self.cliente_id} - {self.nombre}"
